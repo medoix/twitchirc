@@ -8,23 +8,16 @@ import (
 	"github.com/gempir/go-twitch-irc/v2"
 )
 
-func abort(message string) {
-	fmt.Println("Error: ", message)
-	os.Exit(1)
-}
-
 func main() {
-	channel := ""
-	cmdArgs := os.Args[1:]
-	if len(cmdArgs) > 1 {
-		abort("Only specifiy one channel name")
-	} else if len(cmdArgs) < 1 {
-		abort("Please specify a channel to join")
-	} else {
-		// Convert []string from arguments to normal string
-		channel = strings.Join(os.Args[1:], " ")
-	}
 
+	// Get the streamer name argument to set as the channel
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: twitchirc <streamer-name>")
+		os.Exit(1)
+	}
+	channel := "#" + strings.ToLower(os.Args[1])
+
+	// Create the client as either an anonymous or authenticated
 	client := twitch.NewAnonymousClient()
 	//client := twitch.NewClient("yourtwitchusername", "oauth:123123123")
 
@@ -48,7 +41,7 @@ func main() {
         })
 
 	client.OnConnect(func() {
-		fmt.Println("Connected to the Twitch IRC Server and Joined #", channel)
+		fmt.Println("Connected to the Twitch IRC Server and Joined", channel)
 	})
 
 	client.Join(channel)
